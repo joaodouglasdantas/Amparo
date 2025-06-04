@@ -6,85 +6,105 @@ export const style = StyleSheet.create({
         alignContent:'center',
         justifyContent:'center',
         alignItems:'center',
-        backgroundColor:'#558DC2'
+        backgroundColor:'#5C9EDC'
     },
     boxTop:{
         height:Dimensions.get('window').height/3,
         width:'100%',
         justifyContent:'center',
         alignItems:'center',
-        //backgroundColor:'red'
     },
     boxMid:{
         height:Dimensions.get('window').height/4,
         width:'100%',
-        paddingHorizontal:38
+        paddingHorizontal: 32,
+        justifyContent:'center',
+        marginTop: 20,
     },
     boxBottom:{
         height:Dimensions.get('window').height/3,
-        width:'100%',
+        width:'40%',
         alignItems:'center',
-        paddingTop:50
+        marginBottom: -40,
+        paddingTop: 40
     },
     logo:{
-        width:300,
-        height:125
+        width: 250,
+        height: 250,
+        marginBottom: 10,
+        resizeMode: 'contain',
     },
     textTitle:{
         fontFamily:'inter',
-        color:'#d3d3d3',
+        color:'#fff',
         fontWeight:'bold',
-        fontSize:20,
+        fontSize: 18,
+        letterSpacing: 2,
+        paddingLeft: 8,
+        marginTop: 15,
+        marginBottom: 2,
     },
     boxInput:{
         width:'100%',
-        height:40,
-        borderWidth:1,
-        borderRadius:40,
-        marginTop:10,
-        marginBottom:10,
+        height: 45,
         flexDirection:'row',
         alignItems:'center',
-        paddingHorizontal:5,
-        backgroundColor:'#dcdcdc',
+        backgroundColor: '#F6F8FA',
+        borderRadius: 20,
+        marginTop: 12,
+        marginBottom: 8,
+        paddingHorizontal: 16,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 5,
+        elevation: 10,
     },
     textInput:{
+        flex: 1,
         height:'100%',
-        width:'90%',
-        paddingLeft:10,
-        borderRadius:40,
-        fontSize:20
+        fontSize: 15,
+        color: '#222',
+        paddingLeft: 5,
+        backgroundColor: 'transparent',
     },
     button:{
-        width:200,
-        height:50,
+        width: '100%',
+        height: 48,
         alignItems:'center',
         justifyContent:'center',
-        backgroundColor:'#105494',
-        borderRadius:40,
+        backgroundColor:'#1A5DB2',
+        borderRadius: 24,
         shadowColor:'#000',
         shadowOffset:{
             width: 0,
-            height: 3
+            height: 4
         },
-        shadowOpacity: 0.29,
-        shadowRadius: 4.65,
-        elevation: 7
+        shadowOpacity: 0.18,
+        shadowRadius: 8,
+        elevation: 6,
     },
     textButton:{
-        fontSize:20,
+        fontSize: 18,
         fontWeight:'bold',
-        color:'#d3d3d3'
+        color:'#fff',
+        letterSpacing: 1,
     },
     textForget:{
-        paddingLeft:8,
-        fontSize:16,
-        fontWeight:'bold',
-        color:'#d3d3d3'
+        alignSelf:'flex-start',
+        paddingLeft: 8,
+        fontSize: 15,
+        fontWeight:'500',
+        color:'#E9EDF6',
+        marginTop: 10,
+        marginBottom: 10,
     },
     textBotton:{
-        fontSize:16,
+        fontSize: 15,
         fontWeight:'bold',
-        color:'#d3d3d3'
+        color:'#fff'
     }
 })

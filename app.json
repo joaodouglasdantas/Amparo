@@ -1,24 +1,20 @@
 {
   "expo": {
-    "name": "front-end",
-    "slug": "front-end",
+    "name": "Amparo",
+    "slug": "Amparo",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "backgroundColor": "#5C9EDC",
+    "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
+
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#5C9EDC"
       },
       "edgeToEdgeEnabled": true
     },
