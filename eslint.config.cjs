@@ -25,7 +25,7 @@ module.exports = defineConfig([
     {
         ignores: [
             "eslint.config.cjs",
-            "jest.config.js", // Se você tiver e ele também for CJS
+            "jest.config.cjs", // Se você tiver e ele também for CJS
             "metro.config.js", // Comum em React Native
             "babel.config.js",  // Comum
             // Adicione outros arquivos de configuração JS que são CommonJS
