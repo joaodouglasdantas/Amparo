@@ -61,6 +61,14 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
 };
 
 const styles = StyleSheet.create({
+  addButton: {
+    backgroundColor: '#3F7EE4', // Cor do botão de adição
+    borderRadius: 50,
+    padding: 10,
+    borderWidth: 2,
+    borderColor: '#fff',
+    marginBottom: 30, // Para que ele fique um pouco para cima
+  },
   container: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -77,14 +85,6 @@ const styles = StyleSheet.create({
   },
   iconButton: {
     padding: 10,
-  },
-  addButton: {
-    backgroundColor: '#3F7EE4', // Cor do botão de adição
-    borderRadius: 50,
-    padding: 10,
-    borderWidth: 2,
-    borderColor: '#fff',
-    marginBottom: 30, // Para que ele fique um pouco para cima
   },
 });
 

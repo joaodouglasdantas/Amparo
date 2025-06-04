@@ -10,8 +10,7 @@ import CalendarComponent from '../../components/CalendarComponent';
 import ReminderCard from '../../components/ReminderCard';
 import BottomNavigationBar from '../../components/BottomNavigationBar';
 
-
-const LogoAmparo = require('../../assets/LogoAmparo.png');
+import LogoAmparo from '../../assets/LogoAmparo.png'
 
 
 export type RootStackParamList = {
@@ -141,20 +140,20 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5', // cor de fundo geral da tela
+    backgroundColor: '#f5f5f5',
+    flex: 1, // cor de fundo geral da tela
+  },
+  remindersTitle: {
+    color: '#333',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    marginLeft: 16,
+    marginTop: 20,
+    textAlign: 'center', // centraliza o título "Lembretes"
   },
   scrollViewContent: {
     paddingBottom: 80, // adiciona padding na parte inferior para que o conteúdo não seja ocultado pela barra de navegação
-  },
-  remindersTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginLeft: 16,
-    marginTop: 20,
-    marginBottom: 10,
-    textAlign: 'center', // centraliza o título "Lembretes"
   },
 });
 

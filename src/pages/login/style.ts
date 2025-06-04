@@ -1,58 +1,22 @@
 import { Dimensions, StyleSheet } from "react-native";
 
 export const style = StyleSheet.create({
-    container:{
-        flex:1,
-        alignContent:'center',
-        justifyContent:'center',
-        alignItems:'center',
-        backgroundColor:'#5C9EDC'
-    },
-    boxTop:{
-        height:Dimensions.get('window').height/3,
-        width:'100%',
-        justifyContent:'center',
-        alignItems:'center',
-    },
-    boxMid:{
-        height:Dimensions.get('window').height/4,
-        width:'100%',
-        paddingHorizontal: 32,
-        justifyContent:'center',
-        marginTop: 20,
-    },
     boxBottom:{
-        height:Dimensions.get('window').height/3,
-        width:'40%',
         alignItems:'center',
+        height:Dimensions.get('window').height/3,
         marginBottom: -40,
-        paddingTop: 40
-    },
-    logo:{
-        width: 250,
-        height: 250,
-        marginBottom: 10,
-        resizeMode: 'contain',
-    },
-    textTitle:{
-        fontFamily:'inter',
-        color:'#fff',
-        fontWeight:'bold',
-        fontSize: 18,
-        letterSpacing: 2,
-        paddingLeft: 8,
-        marginTop: 15,
-        marginBottom: 2,
+        paddingTop: 40,
+        width:'40%'
     },
     boxInput:{
-        width:'100%',
-        height: 45,
-        flexDirection:'row',
         alignItems:'center',
         backgroundColor: '#F6F8FA',
         borderRadius: 20,
-        marginTop: 12,
+        elevation: 10,
+        flexDirection:'row',
+        height: 45,
         marginBottom: 8,
+        marginTop: 12,
         paddingHorizontal: 16,
         shadowColor: '#000',
         shadowOffset: {
@@ -61,23 +25,28 @@ export const style = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 5,
-        elevation: 10,
+        width:'100%',
     },
-    textInput:{
-        flex: 1,
-        height:'100%',
-        fontSize: 15,
-        color: '#222',
-        paddingLeft: 5,
-        backgroundColor: 'transparent',
+    boxMid:{
+        height:Dimensions.get('window').height/4,
+        justifyContent:'center',
+        marginTop: 20,
+        paddingHorizontal: 32,
+        width:'100%',
+    },
+    boxTop:{
+        alignItems:'center',
+        height:Dimensions.get('window').height/3,
+        justifyContent:'center',
+        width:'100%',
     },
     button:{
-        width: '100%',
-        height: 48,
         alignItems:'center',
-        justifyContent:'center',
         backgroundColor:'#1A5DB2',
         borderRadius: 24,
+        elevation: 6,
+        height: 48,
+        justifyContent:'center',
         shadowColor:'#000',
         shadowOffset:{
             width: 0,
@@ -85,26 +54,57 @@ export const style = StyleSheet.create({
         },
         shadowOpacity: 0.18,
         shadowRadius: 8,
-        elevation: 6,
+        width: '100%',
+    },
+    container:{
+        alignContent:'center',
+        alignItems:'center',
+        backgroundColor:'#5C9EDC',
+        flex:1,
+        justifyContent:'center'
+    },
+    logo:{
+        height: 250,
+        marginBottom: 10,
+        resizeMode: 'contain',
+        width: 250,
+    },
+    textBotton:{
+        color:'#fff',
+        fontSize: 15,
+        fontWeight:'bold'
     },
     textButton:{
+        color:'#fff',
         fontSize: 18,
         fontWeight:'bold',
-        color:'#fff',
         letterSpacing: 1,
     },
     textForget:{
         alignSelf:'flex-start',
-        paddingLeft: 8,
+        color:'#E9EDF6',
         fontSize: 15,
         fontWeight:'500',
-        color:'#E9EDF6',
-        marginTop: 10,
         marginBottom: 10,
+        marginTop: 10,
+        paddingLeft: 8,
     },
-    textBotton:{
+    textInput:{
+        backgroundColor: 'transparent',
+        color: '#222',
+        flex: 1,
         fontSize: 15,
+        height:'100%',
+        paddingLeft: 5,
+    },
+    textTitle:{
+        color:'#fff',
+        fontFamily:'inter',
+        fontSize: 18,
         fontWeight:'bold',
-        color:'#fff'
+        letterSpacing: 2,
+        marginBottom: 2,
+        marginTop: 15,
+        paddingLeft: 8,
     }
 })

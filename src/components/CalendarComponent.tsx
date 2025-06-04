@@ -124,13 +124,8 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   customHeader: {
-    paddingVertical: 10,
     alignItems: 'center',
-  },
-  monthText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#2d4150',
+    paddingVertical: 10,
   },
   legendContainer: {
     flexDirection: 'row',
@@ -138,19 +133,24 @@ const styles = StyleSheet.create({
     marginTop: 15,
     paddingHorizontal: 10,
   },
-  legendItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   legendDot: {
-    width: 10,
-    height: 10,
     borderRadius: 5,
+    height: 10,
     marginRight: 5,
+    width: 10,
+  },
+  legendItem: {
+    alignItems: 'center',
+    flexDirection: 'row',
   },
   legendText: {
-    fontSize: 12,
     color: '#333',
+    fontSize: 12,
+  },
+  monthText: {
+    color: '#2d4150',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 

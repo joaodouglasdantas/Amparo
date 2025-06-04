@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Image, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack'; // Importe para tipagem
 
-
-const SplashLogo = require('../../assets/LogoAmparo.png'); // Ajuste o caminho conforme necessário
+import SplashLogo from '../../assets/LogoAmparo.png'
 
 
 type RootStackParamList = {
@@ -35,23 +34,18 @@ const Splash: React.FC<SplashScreenProps> = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#3F7EE4', // cor de fundo do splashe
-  },
-  logo: {
-    width: 200,
-    height: 80,
-    marginBottom: 20,
+    backgroundColor: '#3F7EE4',
+    flex: 1,
+    justifyContent: 'center', // cor de fundo do splashe
   },
   indicator: {
     marginTop: 20,
   },
-  loadingText: {
-    color: '#FFF',
-    marginTop: 10,
-    fontSize: 16,
+  logo: {
+    height: 80,
+    marginBottom: 20,
+    width: 200,
   },
 });
 

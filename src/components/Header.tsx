@@ -18,19 +18,19 @@ const Header: React.FC<HeaderProps> = ({ logoSource }) => {
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    paddingTop: getStatusBarHeight(),
-    backgroundColor: '#fff', // cor de fundo do cabeçalho
-  },
   container: {
-    width: '100%',
     alignItems: 'center',
-    paddingVertical: 10,
     backgroundColor: '#fff',
+    paddingVertical: 10,
+    width: '100%',
   },
   logo: {
-    width: 100, 
     height: 40, 
-}});
+    width: 100, 
+},
+  safeArea: {
+    backgroundColor: '#fff',
+    paddingTop: getStatusBarHeight(), // cor de fundo do cabeçalho
+  }});
 
 export default Header;

@@ -28,36 +28,36 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#E0F0FF',
     borderRadius: 8,
-    padding: 15,
-    marginHorizontal: 16,
     marginBottom: 10,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 5,
-  },
-  timeText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#3F7EE4',
-    marginLeft: 5,
-  },
-  medicationText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
+    marginHorizontal: 16,
+    padding: 15,
   },
   detailsText: {
-    fontSize: 14,
     color: '#555',
+    fontSize: 14,
     marginLeft: 29, // alinhar com o texto da medicação
   },
+  header: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginBottom: 5,
+  },
+  medicationText: {
+    color: '#333',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   notesText: {
-    fontSize: 14,
     color: '#555',
-    marginTop: 5,
+    fontSize: 14,
     marginLeft: 29,
+    marginTop: 5,
+  },
+  timeText: {
+    color: '#3F7EE4',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 5,
   },
 });
 
