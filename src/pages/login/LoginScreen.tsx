@@ -5,8 +5,11 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
-  Alert // alert para um exemplo de erro
+  Alert,
+  ActivityIndicator 
 } from 'react-native';
+import axios from 'axios'
+import * as SecureStore from 'expo-secure-store'
 import { style } from './style'; 
 import LogoAmparo from '../../assets/LogoAmparo.png';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -21,18 +24,43 @@ type RootStackParamList = {
 type LoginScreenProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 export default function LoginScreen({ navigation }: LoginScreenProps) {
-  // estado para armazenar usuário e senha (exemplo, para simular login)
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [loading, setLoading] = React.useState(false)
 
-  const handleLogin = () => {
-    // aqui vamos implementar a lógica de autenticação real.
+  console.log("Conectando à API em:", process.env.EXPO_PUBLIC_API_URL)
 
-    // exemplo: if usuário/senha forem "test" e "123", go to Home
-    if (username === 'test' && password === '123') {
-      navigation.replace('Home'); // navega para a Home e substitui a tela de login na pilha
-    } else {
-      Alert.alert('Erro de Login', 'Usuário ou senha incorretos.');
+  const handleLogin = async () => {
+    
+    if(!username || !password){
+      Alert.alert('Atenção', 'Por favor, preencha o e-mail e a senha')
+      return
+    }
+
+    setLoading(true)
+
+    try{
+      const apiUrl = process.env.EXPO_PUBLIC_API_URL
+      const response = await axios.post(`${apiUrl}/login`, {
+        username: username,
+        password: password
+      })
+
+      const { token } = response.data
+
+      await SecureStore.setItemAsync('userToken', token)
+      navigation.replace('Home')
+    }catch (error){
+      console.error("Erro no login:", error)
+
+      if (axios.isAxiosError(error) && error.response) {
+          const errorMessage = error.response.data.error || 'Credenciais inválidas. Tente novamente.';
+          Alert.alert('Erro de Login', errorMessage);
+      } else {
+          Alert.alert('Erro de Conexão', 'Não foi possível conectar ao servidor.');
+      }
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -70,7 +98,9 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
             placeholder="Digite sua senha"
             value={password}
             onChangeText={setPassword}
-            secureTextEntry={true} // ocultar a senha
+            keyboardType="number-pad"
+            secureTextEntry={true} 
+            maxLength={4}
           />
           <Entypo
             name="eye" // talvez adicione uma funcionalidade para toggle visibilidade
@@ -78,18 +108,25 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
             color="black"
           />
         </View>
-        <TouchableOpacity> {/* tornar o texto 'esqueci minha senha' clicável */}
+        <TouchableOpacity> 
             <Text style={style.textForget}>Esqueci minha senha</Text>
         </TouchableOpacity>
       </View>
 
       <View style={style.boxBottom}>
-        <TouchableOpacity style={style.button} onPress={handleLogin}>
-          <Text style={style.textButton}>Entrar</Text>
+        <TouchableOpacity 
+          style={[style.button, loading && {backgroundColor: '#ccc'}]} onPress={handleLogin}
+          disabled={loading}
+        >
+          {loading ? (
+              <ActivityIndicator color="#fff" />
+          ) : (
+              <Text style={style.textButton}>Entrar</Text>
+          )}
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity> {/* tornar o texto 'não tem conta?' clicável */}
+      <TouchableOpacity>
         <Text style={style.textBotton}>Não tem conta? Criar agora!</Text>
       </TouchableOpacity>
     </View>
