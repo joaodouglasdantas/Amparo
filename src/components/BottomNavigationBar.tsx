@@ -46,7 +46,7 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
         <Feather
           name="plus"
           size={28}
-          color={getIconColor('add')} // <- agora com cor condicional
+          color={getIconColor('add')} 
         />
       </TouchableOpacity>
 
