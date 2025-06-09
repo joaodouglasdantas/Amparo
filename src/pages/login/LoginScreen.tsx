@@ -37,6 +37,11 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
       return
     }
 
+    //Componente temporário
+    if (username === 'test' && password === '1234'){ 
+      navigation.replace('Home')
+    }
+
     setLoading(true)
 
     try{
