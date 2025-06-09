@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import Feather from '@expo/vector-icons/Feather';
 
 interface BottomNavigationBarProps {
   onCalendarPress: () => void;
@@ -20,7 +21,7 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
   activeTab,
 }) => {
   const getIconColor = (tabName: string) => {
-    return activeTab === tabName ? '#fff' : '#A9D6FF'; // Cor ativa e inativa
+    return activeTab === tabName ? '#fff' : '#A9D6FF';
   };
 
   return (
@@ -32,6 +33,7 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
           color={getIconColor('calendar')}
         />
       </TouchableOpacity>
+
       <TouchableOpacity style={styles.iconButton} onPress={onSearchPress}>
         <MaterialCommunityIcons
           name="text-box-search-outline"
@@ -39,9 +41,15 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
           color={getIconColor('search')}
         />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.addButton} onPress={onAddPress}>
-        <MaterialCommunityIcons name="plus" size={36} color="#fff" />
+
+      <TouchableOpacity style={styles.iconButton} onPress={onAddPress}>
+        <Feather
+          name="plus"
+          size={28}
+          color={getIconColor('add')} // <- agora com cor condicional
+        />
       </TouchableOpacity>
+
       <TouchableOpacity style={styles.iconButton} onPress={onTimerPress}>
         <MaterialCommunityIcons
           name="clock-time-four-outline"
@@ -49,6 +57,7 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
           color={getIconColor('timer')}
         />
       </TouchableOpacity>
+
       <TouchableOpacity style={styles.iconButton} onPress={onSettingsPress}>
         <MaterialCommunityIcons
           name="cog"
@@ -61,27 +70,19 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
 };
 
 const styles = StyleSheet.create({
-  addButton: {
-    backgroundColor: '#3F7EE4', // Cor do botão de adição
-    borderRadius: 50,
-    padding: 10,
-    borderWidth: 2,
-    borderColor: '#fff',
-    marginBottom: 30, // Para que ele fique um pouco para cima
-  },
   container: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    backgroundColor: '#3F7EE4', // Cor da barra de navegação
+    backgroundColor: '#558DC2',
     paddingVertical: 10,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    height: 70, // Altura da barra
+    height: 100,
   },
   iconButton: {
     padding: 10,

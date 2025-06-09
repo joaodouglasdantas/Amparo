@@ -16,6 +16,7 @@ import LogoAmparo from '../../assets/LogoAmparo.png'
 export type RootStackParamList = {
   Login: undefined;
   Home: undefined;
+  Cadastro: undefined;
 };
 
 type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
@@ -65,10 +66,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   };
 
   const handleAddPress = () => {
+    console.log('Plus button clicked!');
     setActiveTab('add');
     // lógica específica para a aba Adicionar
+    navigation.navigate('Cadastro');
     console.log('Aba Adicionar clicada!');
-    Alert.alert('Adicionar', 'Implementar funcionalidade de adicionar novo item.');
+
+    
   };
 
   const handleTimerPress = () => {
@@ -153,7 +157,7 @@ const styles = StyleSheet.create({
     textAlign: 'center', // centraliza o título "Lembretes"
   },
   scrollViewContent: {
-    paddingBottom: 80, // adiciona padding na parte inferior para que o conteúdo não seja ocultado pela barra de navegação
+    paddingBottom: 130, // adiciona padding na parte inferior para que o conteúdo não seja ocultado pela barra de navegação
   },
 });
 

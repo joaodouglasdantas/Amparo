@@ -1,16 +1,18 @@
 import React from 'react';
-import { View, Image, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
+import { View, Image, StyleSheet, SafeAreaView, StatusBar, ImageSourcePropType } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
-import HeaderLogo from '../assets/LogoAmparoPreto.png'; 
 
-//interface HeaderProps {}
+// Definição da interface para aceitar a prop logoSource
+interface HeaderProps {
+  logoSource: ImageSourcePropType;
+}
 
-const Header: React.FC = () => {
+const Header: React.FC<HeaderProps> = ({ logoSource }) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" />
       <View style={styles.container}>
-        <Image source={HeaderLogo} style={styles.logo} resizeMode="contain" />
+        <Image source={logoSource} style={styles.logo} resizeMode="contain" />
       </View>
     </SafeAreaView>
   );
@@ -24,12 +26,13 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   logo: {
-    height: 40, 
-    width: 100, 
-},
+    height: 40,
+    width: 100,
+  },
   safeArea: {
     backgroundColor: '#fff',
-    paddingTop: getStatusBarHeight(), 
-  }});
+    paddingTop: getStatusBarHeight(),
+  },
+});
 
 export default Header;
