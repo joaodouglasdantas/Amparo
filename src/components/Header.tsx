@@ -1,17 +1,16 @@
 import React from 'react';
 import { View, Image, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
+import HeaderLogo from '../assets/LogoAmparoPreto.png'; 
 
-interface HeaderProps {
-  logoSource: any;
-}
+//interface HeaderProps {}
 
-const Header: React.FC<HeaderProps> = ({ logoSource }) => {
+const Header: React.FC = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" />
       <View style={styles.container}>
-        <Image source={logoSource} style={styles.logo} resizeMode="contain" />
+        <Image source={HeaderLogo} style={styles.logo} resizeMode="contain" />
       </View>
     </SafeAreaView>
   );
@@ -30,7 +29,7 @@ const styles = StyleSheet.create({
 },
   safeArea: {
     backgroundColor: '#fff',
-    paddingTop: getStatusBarHeight(), // cor de fundo do cabeçalho
+    paddingTop: getStatusBarHeight(), 
   }});
 
 export default Header;
