@@ -3,10 +3,9 @@ import { View, Image, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import HeaderLogo from '../assets/LogoAmparoPreto.png'; 
 
-interface HeaderProps {
-}
+//interface HeaderProps {}
 
-const Header: React.FC<HeaderProps> = () => {
+const Header: React.FC = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" />
@@ -30,7 +29,7 @@ const styles = StyleSheet.create({
 },
   safeArea: {
     backgroundColor: '#fff',
-    paddingTop: getStatusBarHeight(), // cor de fundo do cabeçalho
+    paddingTop: getStatusBarHeight(), 
   }});
 
 export default Header;
