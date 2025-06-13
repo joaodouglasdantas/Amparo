@@ -70,7 +70,8 @@ module.exports = defineConfig([
             '@typescript-eslint/no-explicit-any': 'warn',
             'react-native/sort-styles': 'off',
             'react-native/no-raw-text': 'off',
-            '@typescript-eslint/no-unused-vars': 'warn'
+            '@typescript-eslint/no-unused-vars': 'warn',
+            'react-native/no-unused-styles': 'warn'
         },
     }
 ]);
