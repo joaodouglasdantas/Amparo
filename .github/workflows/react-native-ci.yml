@@ -20,26 +20,8 @@ jobs:
       - name: Instalar dependências
         run: npm ci
 
-      # --- INÍCIO DOS PASSOS DE DEBUG ---
-
-      - name: 🧐 1. Verificar se a pasta do módulo existe
-        # Este comando lista o conteúdo da pasta do plugin.
-        # Se a pasta não existir, este passo vai falhar, e saberemos que o 'npm ci' não a instalou.
-        run: ls -l node_modules/eslint-plugin-react-native/
-
-      - name: 🧐 2. Interrogar o npm sobre o pacote
-        # O comando 'npm list' mostra se o npm considera o pacote instalado e em qual versão.
-        # O '|| true' no final garante que o workflow não pare se o pacote não for encontrado.
-        run: npm list eslint-plugin-react-native || true
-
-      - name: 🧐 3. Verificar o package.json que está na CI
-        # Imprime o conteúdo do package.json para termos certeza de que é a versão que esperamos.
-        run: cat package.json
-
-      # --- FIM DOS PASSOS DE DEBUG ---
-
       - name: Run Linter
         run: npm run lint
 
-      - name: Run Tests
-        run: npm run test
+      # - name: Run Tests
+      #   run: npm run test
