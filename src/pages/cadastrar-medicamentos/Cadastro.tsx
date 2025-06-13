@@ -1,17 +1,83 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, Alert, Modal } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { format } from 'date-fns';
 
 import Header from '../../components/Header';
 import BottomNavigationBar from '../../components/BottomNavigationBar';
 import LogoAmparo from '../../assets/LogoAmparo.png';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
-export default function CadastrarMedicamento() {
-  const [nome, setNome] = useState('');
-  const [horario, setHorario] = useState('');
-  const [frequencia, setFrequencia] = useState('');
-  const [dosagem, setDosagem] = useState('');
-  const [observacao, setObservacao] = useState('');
+// 1. Definimos um tipo forte para os dados do nosso formulário
+type MedicamentoFormData = {
+  nome: string;
+  horario: Date;
+  frequencia: 'Diário' | 'Semanal' | null;
+  dosagem: string;
+  observacao: string;
+};
+
+// Precisamos também das props de navegação
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../home/HomeScreen'; // Reutilizando o tipo da HomeScreen
+type CadastroScreenProps = NativeStackScreenProps<RootStackParamList, 'Cadastro'>;
+
+
+export default function CadastrarMedicamento({ navigation }: CadastroScreenProps) {
+  // 2. Usamos um único estado para o formulário, tipado com nossa interface
+  const [formData, setFormData] = useState<MedicamentoFormData>({
+    nome: '',
+    horario: new Date(), // Inicia com a data/hora atual
+    frequencia: null,
+    dosagem: '',
+    observacao: '',
+  });
+
+  // Estado para controlar a visibilidade do seletor de horário
+  const [showTimePicker, setShowTimePicker] = useState(false);
+
+  // 3. Criamos um handler genérico para atualizar o estado
+  const handleInputChange = (field: keyof MedicamentoFormData, value: any) => {
+    setFormData(prevState => ({
+      ...prevState,
+      [field]: value,
+    }));
+  };
+  
+  const onChangeTime = (event: DateTimePickerEvent, selectedDate?: Date) => {
+    if (Platform.OS === 'android') {
+      setShowTimePicker(false);
+    }
+
+    if (selectedDate) {
+        handleInputChange('horario', selectedDate);
+    }
+  };
+
+  // 4. Criamos a função de salvamento
+  const handleSave = () => {
+    // Aqui você faria a validação dos dados
+    if (!formData.nome || !formData.horario || !formData.frequencia || !formData.dosagem) {
+      Alert.alert('Atenção', 'Por favor, preencha todos os campos obrigatórios.');
+      return;
+    }
+
+    // Aqui você faria a chamada para a sua API com axios
+    console.log('Dados a serem enviados para a API:', {
+        ...formData,
+        // Formata o horário para uma string antes de enviar (ex: "18:30")
+        horario: formData.horario ? format(formData.horario, 'HH:mm') : null,
+    });
+
+    Alert.alert('Sucesso', 'Medicamento cadastrado!');
+    // Exemplo: navegar de volta para a Home após salvar
+    // navigation.navigate('Home'); 
+  };
+
+  const confirmIOSTime = () => {
+    setShowTimePicker(false);
+  }
 
   return (
     <View style={styles.wrapper}>
@@ -21,57 +87,86 @@ export default function CadastrarMedicamento() {
 
         <TextInput
           placeholder="Nome do medicamento"
-          placeholderTextColor="#558DC2"
-          value={nome}
-          onChangeText={setNome}
+          placeholderTextColor="black"
+          value={formData.nome}
+          onChangeText={(value) => handleInputChange('nome', value)}
           style={styles.input}
         />
+        
+        <TouchableOpacity onPress={() => setShowTimePicker(true)} style={styles.input}>
+            <Text style={{color: 'black' }}>
+                {formData.horario ? `Horário: ${format(formData.horario, 'HH:mm')}` : 'Horário'}
+            </Text>
+        </TouchableOpacity>
 
-        <TextInput
-          placeholder="Horário"
-          placeholderTextColor="#558DC2"
-          value={horario}
-          onChangeText={setHorario}
-          style={styles.input}
-        />
+        {Platform.OS === 'android' && showTimePicker && (
+          <DateTimePicker
+            value={formData.horario}
+            mode="time"
+            is24Hour={true}
+            display="default"
+            onChange={onChangeTime}
+          />
+        )}
 
-        {/* Aqui o Select customizado */}
+        {Platform.OS === 'ios' && (
+            <Modal
+                transparent={true}
+                animationType="slide"
+                visible={showTimePicker}
+                onRequestClose={() => setShowTimePicker(false)}
+            >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <DateTimePicker
+                            value={formData.horario}
+                            mode="time"
+                            is24Hour={true}
+                            textColor='black'
+                            display="spinner" 
+                            onChange={onChangeTime}
+                        />
+                        <TouchableOpacity style={styles.modalButton} onPress={confirmIOSTime}>
+                            <Text style={styles.modalButtonText}>Confirmar</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+        )}
+
         <RNPickerSelect
-          placeholder={{ label: 'Frequência', value: null, color: '#888' }}
+          placeholder={{ label: 'Frequência', value: null, color:'black' }}
           items={[
-            { label: 'Diário', value: 'Diário' },
-            { label: 'Semanal', value: 'Semanal' },
+            { label: 'Diário', value: 'Diário', color:'black' },
+            { label: 'Semanal', value: 'Semanal', color:'black' },
           ]}
-          onValueChange={(value) => setFrequencia(value)}
-          value={frequencia}
-          style={{
-            inputIOS: styles.pickerInput,
-            inputAndroid: styles.pickerInput,
-            placeholder: {
-              color: '#558DC2',
-              fontSize: 14,
-            },
+          onValueChange={(value) => handleInputChange('frequencia', value)}
+          value={formData.frequencia}
+          style={pickerSelectStyles}
+          useNativeAndroidPickerStyle={false}
+          Icon={() => {
+              return <AntDesign name="down" size={16} color="gray" style={{ paddingRight: 15, paddingTop: 12 }} />;
           }}
-          useNativeAndroidPickerStyle={false} // para aplicar estilo no Android
         />
 
         <TextInput
-          placeholder="Dosagem"
-          placeholderTextColor="#558DC2"
-          value={dosagem}
-          onChangeText={setDosagem}
+          placeholder="Dosagem (ex: 50mg)"
+          placeholderTextColor="black"
+          value={formData.dosagem}
+          onChangeText={(value) => handleInputChange('dosagem', value)}
           style={styles.input}
         />
 
         <TextInput
           placeholder="Observação"
-          placeholderTextColor="#558DC2"
-          value={observacao}
-          onChangeText={setObservacao}
+          placeholderTextColor="black"
+          value={formData.observacao}
+          onChangeText={(value) => handleInputChange('observacao', value)}
           style={styles.input}
         />
+        
 
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={handleSave}>
           <Text style={styles.buttonText}>SALVAR</Text>
         </TouchableOpacity>
       </View>
@@ -88,25 +183,45 @@ export default function CadastrarMedicamento() {
   );
 }
 
-
-{/*Estilização */}
 const styles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#FFFFFF',
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
+    padding: 20,
+  },
+  modalButton: {
+    backgroundColor: '#558DC2',
+    padding: 15,
+    borderRadius: 8,
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  modalButtonText: {
+      color: '#fff',
+      fontSize: 16,
+      fontWeight: 'bold',
+  },
   wrapper: {
     flex: 1,
     backgroundColor: '#fff',
-    justifyContent: 'space-between',
   },
   container: {
-    padding: 20,
-    marginTop: 20,
+    paddingHorizontal: 20,
   },
   title: {
-    fontSize: 20,
-    fontWeight: '400',
+    fontSize: 22,
+    fontWeight: '500',
+    marginVertical: 20,
+    textAlign: 'center',
     color: '#558DC2',
     marginBottom: 30,
     marginTop: 30,
-    textAlign: 'center',
   },
   input: {
     borderWidth: 1,
@@ -116,30 +231,30 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     backgroundColor: '#f0f4f8',
     fontSize: 14,
-  },
-  pickerInput: {
-    height: 44,
-    fontSize: 14,
-    color: '#000',
-    paddingHorizontal: 10,
-    backgroundColor: '#f0f4f8',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#558DC2',
-    paddingVertical: 12, // centraliza verticalmente no iOS
-    marginBottom: 20,
+    justifyContent: 'center',
   },
   button: {
     backgroundColor: '#558DC2',
-    padding: 10,
+    paddingVertical: 15,
     borderRadius: 8,
-    marginTop: 30,
-    width: 167,
-    alignSelf: 'center',
+    marginTop: 20,
+    alignItems: 'center',
   },
   buttonText: {
     color: '#fff',
-    textAlign: 'center',
+    fontSize: 16,
     fontWeight: 'bold',
   },
+});
+
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    ...styles.input
+  },
+  inputAndroid: {
+    ...styles.input
+  },
+  placeholder: {
+    color: 'black',
+  }
 });
