@@ -38,22 +38,23 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
     }
 
     //Componente temporário
-    if (username === 'test' && password === '1234'){ 
-      navigation.replace('Home')
-    }
+     if (username === 'test' && password === '1234'){ 
+       navigation.replace('Home')
+     }
 
     setLoading(true)
 
     try{
       const apiUrl = process.env.EXPO_PUBLIC_API_URL
-      const response = await axios.post(`${apiUrl}/login`, {
+      const response = await axios.post(`${apiUrl}/api/token/`, {
         username: username,
         password: password
       })
 
-      const { token } = response.data
+      const tokens  = response.data
 
-      await SecureStore.setItemAsync('userToken', token)
+      await SecureStore.setItemAsync('accessToken', tokens.access);
+      await SecureStore.setItemAsync('refreshToken', tokens.refresh);
       navigation.replace('Home')
     }catch (error){
       console.error("Erro no login:", error)

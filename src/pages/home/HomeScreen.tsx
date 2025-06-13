@@ -10,7 +10,7 @@ import CalendarComponent from '../../components/CalendarComponent';
 import ReminderCard from '../../components/ReminderCard';
 import BottomNavigationBar from '../../components/BottomNavigationBar';
 
-import LogoAmparo from '../../assets/LogoAmparo.png'
+import LogoAmparo from '../../assets/LogoAmparoPreto.png'
 
 
 export type RootStackParamList = {
