@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import styles from './styles'; 
+import LogoAmparo from '../../assets/LogoAmparo.png'; 
 
 export default function CadastroScreen() {
   const [username, setUsername] = useState('');
@@ -55,7 +56,7 @@ export default function CadastroScreen() {
        
         <View style={styles.container}>
           <Image
-            source={require('../../assets/LogoAmparo.png')}
+            source={LogoAmparo}
             style={styles.logo}
             resizeMode="contain"
           />
