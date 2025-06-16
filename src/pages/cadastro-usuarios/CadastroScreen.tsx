@@ -10,33 +10,75 @@ import {
   StatusBar,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; 
-import styles from './styles'; 
-import LogoAmparo from '../../assets/LogoAmparo.png'; 
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import styles from './styles';
+import LogoAmparo from '../../assets/LogoAmparo.png';
 
 export default function CadastroScreen() {
   const [username, setUsername] = useState('');
-  const [pin, setPin] = useState('');
+  const [password, setPassword] = useState(''); 
+  const [loading, setLoading] = useState(false);
+
+  const navigation = useNavigation();
 
   const handleKeyPress = (num: string) => {
-    if (pin.length < 4) setPin(pin + num);
+    if (password.length < 4) setPassword(password + num);
   };
 
   const handleBackspace = () => {
-    setPin(pin.slice(0, -1));
+    setPassword(password.slice(0, -1));
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!username.trim()) {
-      Alert.alert('Erro', 'Digite o nome de usuário.');
+      Alert.alert('Atenção', 'Por favor, preencha o nome de usuário.');
       return;
     }
-    if (pin.length < 4) {
-      Alert.alert('Erro', 'O PIN deve ter 4 dígitos.');
+    if (password.length < 4) {
+      Alert.alert('Atenção', 'O PIN deve ter 4 dígitos.');
       return;
     }
-    Alert.alert('Sucesso', `Usuário: ${username}\nPIN: ${pin}`);
+
+    setLoading(true);
+
+    try {
+      const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+      const response = await axios.post(`${apiUrl}/api/pacientes/`, {
+        username: username,
+        password: password,
+      });
+
+      Alert.alert(
+        'Sucesso!',
+        'Sua conta foi criada. Por favor, faça o login.',
+        [{ text: 'OK', onPress: () => navigation.navigate('Login' as never) }]
+      );
+
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("Erro no cadastro:", JSON.stringify(error.response?.data));
+      } else {
+        console.error("Erro no cadastro:", error);
+      }
+      let errorMessage = 'Não foi possível criar a conta. Tente novamente.';
+      if (axios.isAxiosError(error) && error.response?.data) {
+        const errors = error.response.data;
+        if (errors.username) {
+            errorMessage = `Nome de usuário: ${errors.username[0]}`;
+        } else if (errors.password) {
+            errorMessage = `Senha: ${errors.password[0]}`;
+        } else if (errors.error) {
+            errorMessage = errors.error;
+        }
+      }
+      Alert.alert('Erro de Cadastro', errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const keypadLayout = [
@@ -45,6 +87,18 @@ export default function CadastroScreen() {
     ['7', '8', '9'],
     ['', '0', 'backspace'], 
   ];
+
+  const renderPinInputs = () => (
+    <View style={styles.pinContainer}>
+      {Array(4).fill(0).map((_, index) => (
+        <View key={index} style={styles.pinBox}>
+          {password.length > index && (
+            <Text style={styles.pinText}>*</Text>
+          )}
+        </View>
+      ))}
+    </View>
+);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -73,16 +127,8 @@ export default function CadastroScreen() {
           />
 
           <Text style={styles.label}>Crie seu PIN</Text>
-          <TextInput
-            style={styles.pinInput}
-            value={pin}
-            secureTextEntry
-            editable={false} 
-            maxLength={4}
-            textAlign="center"
-          />
+          {renderPinInputs()}
 
-          
           <View style={styles.keypad}>
             {keypadLayout.map((row, rowIndex) => (
               <View key={rowIndex} style={styles.keypadRow}>
@@ -117,8 +163,13 @@ export default function CadastroScreen() {
             ))}
           </View>
 
-          <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
-            <Text style={styles.confirmButtonText}>Confirmar</Text>
+          {/* Botão de confirmação com estado de carregamento */}
+          <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm} disabled={loading}>
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.confirmButtonText}>Confirmar</Text>
+            )}
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
