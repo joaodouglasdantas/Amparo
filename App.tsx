@@ -7,13 +7,15 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Splash from './src/pages/splashe'; 
 import LoginScreen from './src/pages/login/LoginScreen'; 
 import HomeScreen from './src/pages/home/HomeScreen'; 
-import CadastroMedicamentos from './src/pages/cadastrar-medicamentos/Cadastro';      
+import CadastroMedicamentos from './src/pages/cadastrar-medicamentos/Cadastro';  
+import CadastroUsuario from './src/pages/cadastro-usuarios/CadastroScreen';    
 
 export type RootStackParamList = {
   Splash: undefined; 
   Login: undefined;  
   Home: undefined;  
-  Cadastro: undefined;
+  CadastroMedicamento: undefined;
+  CadastroUsuario: undefined
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -25,7 +27,8 @@ export default function App() {
         <Stack.Screen name="Splash" component={Splash} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Cadastro" component={CadastroMedicamentos} />
+        <Stack.Screen name="CadastroMedicamento" component={CadastroMedicamentos} />
+        <Stack.Screen name="CadastroUsuario" component={CadastroUsuario} />
       </Stack.Navigator>
     </NavigationContainer>
   );

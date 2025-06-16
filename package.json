@@ -53,8 +53,8 @@
     "eslint": "^9.25.0",
     "eslint-config-expo": "~9.2.0",
     "typescript": "~5.8.3",
-    "eslint-plugin-react":"7.37.5",
-    "eslint-plugin-react-native":"5.0.0"
+    "eslint-plugin-react": "7.37.5",
+    "eslint-plugin-react-native": "5.0.0"
   },
   "private": true
 }

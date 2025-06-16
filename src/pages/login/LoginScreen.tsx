@@ -14,19 +14,17 @@ import { style } from './style';
 import LogoAmparo from '../../assets/LogoAmparo.png';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Entypo from '@expo/vector-icons/Entypo';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack'; 
-
-type RootStackParamList = {
-  Login: undefined; 
-  Home: undefined;  
-};
+import { RootStackParamList } from '../../../App';
 
 type LoginScreenProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 export default function LoginScreen({ navigation }: LoginScreenProps) {
-  const [username, setUsername] = React.useState('');
-  const [password, setPassword] = React.useState('');
+  const [username, setUsername] = React.useState('')
+  const [password, setPassword] = React.useState('')
   const [loading, setLoading] = React.useState(false)
+  const [rememberMe, setRememberMe] = React.useState(false)
 
   console.log("Conectando à API em:", process.env.EXPO_PUBLIC_API_URL)
 
@@ -85,10 +83,10 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
         <View style={style.boxInput}>
           <TextInput
             style={style.textInput}
-            placeholder="Digite seu usuário" // Adicione um placeholder
+            placeholder="Digite seu usuário" 
             value={username}
             onChangeText={setUsername}
-            autoCapitalize="none" // Para evitar autocapitalização em campos de usuário
+            autoCapitalize="none" 
           />
           <AntDesign
             name='user'
@@ -97,7 +95,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
           />
         </View>
 
-        <Text style={style.textTitle}>SENHA</Text>
+        <Text style={style.textTitle}>PIN</Text>
         <View style={style.boxInput}>
           <TextInput
             style={style.textInput}
@@ -114,9 +112,23 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
             color="black"
           />
         </View>
-        <TouchableOpacity> 
+        <View style={style.rowBetween}>
+          <TouchableOpacity
+            style={style.rememberMeContainer}
+            onPress={() => setRememberMe(!rememberMe)}
+            activeOpacity={0.7}
+          >
+            <MaterialIcons
+              name={rememberMe ? "check-box" : "check-box-outline-blank"}
+              size={20}
+              color="#fff"
+            />
+            <Text style={style.rememberMeText}>Lembre-se de mim</Text>
+          </TouchableOpacity>
+          <TouchableOpacity> 
             <Text style={style.textForget}>Esqueci minha senha</Text>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View style={style.boxBottom}>
@@ -132,7 +144,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('CadastroUsuario')}>
         <Text style={style.textBotton}>Não tem conta? Criar agora!</Text>
       </TouchableOpacity>
     </View>

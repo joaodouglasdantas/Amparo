@@ -16,7 +16,7 @@ import LogoAmparo from '../../assets/LogoAmparoPreto.png'
 export type RootStackParamList = {
   Login: undefined;
   Home: undefined;
-  Cadastro: undefined;
+  CadastroMedicamento: undefined;
 };
 
 type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
@@ -69,7 +69,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     console.log('Plus button clicked!');
     setActiveTab('add');
     // lógica específica para a aba Adicionar
-    navigation.navigate('Cadastro');
+    navigation.navigate('CadastroMedicamento'); 
     console.log('Aba Adicionar clicada!');
 
     
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     flex: 1, // cor de fundo geral da tela
   },
   remindersTitle: {
-    color: '#333',
+    color: 'rgba(79, 131, 217, 1)',
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,

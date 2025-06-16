@@ -14,7 +14,7 @@ const ReminderCard: React.FC<ReminderCardProps> = ({ time, medication, dose, fre
   return (
     <View style={styles.card}>
       <View style={styles.header}>
-        <MaterialCommunityIcons name="clock-time-four-outline" size={24} color="#3F7EE4" />
+        <MaterialCommunityIcons name="clock-time-four-outline" size={24} color="#fff" />
         <Text style={styles.timeText}>{time}</Text>
         <Text style={styles.medicationText}> - {medication}</Text>
       </View>
@@ -26,14 +26,14 @@ const ReminderCard: React.FC<ReminderCardProps> = ({ time, medication, dose, fre
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#E0F0FF',
+    backgroundColor: 'rgba(79, 131, 217, 1)',
     borderRadius: 8,
     marginBottom: 10,
     marginHorizontal: 16,
     padding: 15,
   },
   detailsText: {
-    color: '#555',
+    color: '#fff',
     fontSize: 14,
     marginLeft: 29, // alinhar com o texto da medicação
   },
@@ -43,18 +43,18 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   medicationText: {
-    color: '#333',
+    color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },
   notesText: {
-    color: '#555',
+    color: '#fff',
     fontSize: 14,
     marginLeft: 29,
     marginTop: 5,
   },
   timeText: {
-    color: '#3F7EE4',
+    color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
     marginLeft: 5,

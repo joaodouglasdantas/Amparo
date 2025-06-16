@@ -21,7 +21,7 @@ type MedicamentoFormData = {
 // Precisamos também das props de navegação
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../home/HomeScreen'; // Reutilizando o tipo da HomeScreen
-type CadastroScreenProps = NativeStackScreenProps<RootStackParamList, 'Cadastro'>;
+type CadastroScreenProps = NativeStackScreenProps<RootStackParamList, 'CadastroMedicamento'>;
 
 
 export default function CadastrarMedicamento({ navigation }: CadastroScreenProps) {

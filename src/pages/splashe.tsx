@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet, Image, ActivityIndicator } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack'; // Importe para tipagem
+import { NativeStackScreenProps } from '@react-navigation/native-stack'; 
 
 import SplashLogo from '../../assets/LogoAmparo.png'
-
 
 type RootStackParamList = {
   Splash: undefined;
@@ -35,7 +34,7 @@ const Splash: React.FC<SplashScreenProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    backgroundColor: '#3F7EE4',
+    backgroundColor: '#5C9EDC',
     flex: 1,
     justifyContent: 'center', // cor de fundo do splashe
   },
