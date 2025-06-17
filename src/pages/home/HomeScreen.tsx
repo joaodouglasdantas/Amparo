@@ -1,36 +1,49 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack'; // Importe NativeStackScreenProps
-import { format } from 'date-fns';
+import React, { useState, useEffect, useMemo } from 'react';
+import { View, Text, StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack'; 
+import { format, getDay, parse } from 'date-fns';
 import { ptBR } from 'date-fns/locale'; 
-
+import api from '../../services/api'; 
+import { useFocusEffect } from '@react-navigation/native'
+import styles from './styles';
 
 import Header from '../../components/Header';
 import CalendarComponent from '../../components/CalendarComponent';
 import ReminderCard from '../../components/ReminderCard';
 import BottomNavigationBar from '../../components/BottomNavigationBar';
-
 import LogoAmparo from '../../assets/LogoAmparoPreto.png'
-
 
 export type RootStackParamList = {
   Login: undefined;
   Home: undefined;
   CadastroMedicamento: undefined;
 };
-
 type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
-const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
-  // estado para a data selecionada no calendário
-  const [selectedDate, setSelectedDate] = useState<string>(
-    format(new Date(), 'yyyy-MM-dd') // data atual no formato YYYY-MM-DD
-  );
+interface MedicamentoType {
+  id: number;
+  nome: string;
+  dosagem: string;
+  observacao: string;
+}
 
-  // estado para as datas marcadas no calendário (para exibir pontos de eventos, etc.)
+interface AgendamentoType {
+  id: number;
+  horario: string; 
+  frequencia: 'Diário' | 'Semanal';
+  medicamento: MedicamentoType;
+}
+
+const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
+  const [selectedDate, setSelectedDate] = useState<string>(
+    format(new Date(), 'yyyy-MM-dd')
+  );
   const [markedDates, setMarkedDates] = useState<{ [key: string]: any }>({});
 
-  // estado para a aba ativa da barra de navegação inferior
+  const [agendamentos, setAgendamentos] = useState<AgendamentoType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const [activeTab, setActiveTab] = useState<'calendar' | 'search' | 'add' | 'timer' | 'settings'>('calendar');
 
   // efeito para marcar a data selecionada no calendário
@@ -89,76 +102,96 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     // navigation.navigate('Settings');
   };
 
+  const fetchAgendamentos = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await api.get('/api/agendamentos/');
+      setAgendamentos(response.data);
+    } catch (err) {
+      console.error("Erro ao buscar agendamentos:", err);
+      setError("Não foi possível carregar seus lembretes.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchAgendamentos();
+    }, [])
+  );
+
+  useEffect(() => {
+    const newMarkedDates: { [key: string]: any } = {};
+    agendamentos.forEach(ag => {
+        const todayStr = format(new Date(), 'yyyy-MM-dd');
+        newMarkedDates[todayStr] = { ...newMarkedDates[todayStr], marked: true, dotColor: '#5095D4' };
+    });
+
+    newMarkedDates[selectedDate] = { ...newMarkedDates[selectedDate], selected: true, selectedColor: '#3F7EE4' };
+    
+    setMarkedDates(newMarkedDates);
+  }, [selectedDate, agendamentos]);
+
+  const lembretesDoDia = useMemo(() => {
+    const diaDaSemanaSelecionado = getDay(new Date(`${selectedDate}T12:00:00`)); 
+
+    return agendamentos.filter(ag => {
+      if (ag.frequencia === 'Diário') {
+        return true;
+      }
+      if (ag.frequencia === 'Semanal') {
+  
+        return diaDaSemanaSelecionado === 0; 
+      }
+      return false;
+    }).sort((a, b) => a.horario.localeCompare(b.horario)); 
+  }, [selectedDate, agendamentos]);
+
+  const renderContent = () => {
+    if (loading) {
+      return <ActivityIndicator size="large" color="#3F7EE4" style={{ marginTop: 50 }} />;
+    }
+    if (error) {
+      return <Text style={styles.errorText}>{error}</Text>;
+    }
+    if (lembretesDoDia.length === 0) {
+        return <Text style={styles.emptyText}>Nenhum lembrete para este dia.</Text>
+    }
+    
+    return lembretesDoDia.map((ag) => (
+      <ReminderCard
+        key={ag.id} 
+        time={format(parse(ag.horario, 'HH:mm:ss', new Date()), 'HH:mm')} 
+        medication={ag.medicamento.nome}
+        dose={ag.medicamento.dosagem}
+        frequency={ag.frequencia}
+        notes={ag.medicamento.observacao}
+      />
+    ));
+  };
 
   return (
     <View style={styles.container}>
-      {/* componente de cabeçalho com o logo da Amparo */}
       <Header logoSource={LogoAmparo} />
-
-      {/* scrollview para o conteúdo principal da tela */}
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        {/* componente de calendário */}
         <CalendarComponent
-          onDayPress={handleDayPress}
-          markedDates={markedDates}
-          // currentMonth pode ser a data atual ou a data selecionada, dependendo da preferência
-          currentMonth={format(new Date(), 'yyyy-MM-01')}
-        />
-
-        <Text style={styles.remindersTitle}>Lembretes</Text>
-
-        {/* exemplo de cards de Lembretes estáticos */}
-        <ReminderCard
-          time="18:00"
-          medication="Losartana"
-          dose="50mg"
-          frequency="seg, qua, sex"
-        />
-        <ReminderCard
-          time="18:00"
-          medication="Losartana"
-          dose="50mg"
-          frequency="seg, qua, sex"
-          notes="Tomar 2 comprimidos"
-        />
-        <ReminderCard
-          time="20:00"
-          medication="Omeprazol"
-          dose="20mg"
-          frequency="todos os dias"
-        />
+          onDayPress={(day) => setSelectedDate(day.dateString)}
+          markedDates={markedDates} currentMonth={''}        />
+        <Text style={styles.remindersTitle}>Lembretes para {format(new Date(`${selectedDate}T12:00:00`), 'dd/MM/yyyy')}</Text>
+        {renderContent()}
       </ScrollView>
-
-      {/* barra de Navegação Inferior */}
       <BottomNavigationBar
         onCalendarPress={handleCalendarPress}
         onSearchPress={handleSearchPress}
         onAddPress={handleAddPress}
         onTimerPress={handleTimerPress}
         onSettingsPress={handleSettingsPress}
-        activeTab={activeTab} // passa a aba ativa para o componente de navegação
+        activeTab={activeTab} 
       />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#f5f5f5',
-    flex: 1, // cor de fundo geral da tela
-  },
-  remindersTitle: {
-    color: 'rgba(79, 131, 217, 1)',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    marginLeft: 16,
-    marginTop: 20,
-    textAlign: 'center', // centraliza o título "Lembretes"
-  },
-  scrollViewContent: {
-    paddingBottom: 130, // adiciona padding na parte inferior para que o conteúdo não seja ocultado pela barra de navegação
-  },
-});
 
 export default HomeScreen;
