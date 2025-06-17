@@ -3,13 +3,16 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, Alert, M
 import RNPickerSelect from 'react-native-picker-select';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
+import styles from './style';
+import axios from 'axios'
+import * as SecureStore from 'expo-secure-store'
+import { ActivityIndicator } from 'react-native'
 
 import Header from '../../components/Header';
 import BottomNavigationBar from '../../components/BottomNavigationBar';
 import LogoAmparo from '../../assets/LogoAmparo.png';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
-// 1. Definimos um tipo forte para os dados do nosso formulário
 type MedicamentoFormData = {
   nome: string;
   horario: Date;
@@ -18,14 +21,12 @@ type MedicamentoFormData = {
   observacao: string;
 };
 
-// Precisamos também das props de navegação
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../home/HomeScreen'; // Reutilizando o tipo da HomeScreen
+import { RootStackParamList } from '../home/HomeScreen'; 
 type CadastroScreenProps = NativeStackScreenProps<RootStackParamList, 'CadastroMedicamento'>;
 
 
 export default function CadastrarMedicamento({ navigation }: CadastroScreenProps) {
-  // 2. Usamos um único estado para o formulário, tipado com nossa interface
   const [formData, setFormData] = useState<MedicamentoFormData>({
     nome: '',
     horario: new Date(), // Inicia com a data/hora atual
@@ -33,9 +34,8 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
     dosagem: '',
     observacao: '',
   });
-
-  // Estado para controlar a visibilidade do seletor de horário
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // 3. Criamos um handler genérico para atualizar o estado
   const handleInputChange = (field: keyof MedicamentoFormData, value: any) => {
@@ -55,24 +55,57 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
     }
   };
 
-  // 4. Criamos a função de salvamento
-  const handleSave = () => {
-    // Aqui você faria a validação dos dados
+  
+  const handleSave = async () => {
     if (!formData.nome || !formData.horario || !formData.frequencia || !formData.dosagem) {
       Alert.alert('Atenção', 'Por favor, preencha todos os campos obrigatórios.');
       return;
     }
 
-    // Aqui você faria a chamada para a sua API com axios
-    console.log('Dados a serem enviados para a API:', {
-        ...formData,
-        // Formata o horário para uma string antes de enviar (ex: "18:30")
-        horario: formData.horario ? format(formData.horario, 'HH:mm') : null,
-    });
+    setLoading(true);
 
-    Alert.alert('Sucesso', 'Medicamento cadastrado!');
-    // Exemplo: navegar de volta para a Home após salvar
-    // navigation.navigate('Home'); 
+    try {
+      // 1. Pegar o token de autenticação
+      const token = await SecureStore.getItemAsync('accessToken');
+      if (!token) {
+        Alert.alert('Erro', 'Você não está autenticado.');
+        setLoading(false);
+        // Opcional: navegar para a tela de login
+        // navigation.navigate('Login');
+        return;
+      }
+
+      const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+
+      // 2. Preparar os dados para enviar. O horário precisa ser formatado.
+      const payload = {
+        ...formData,
+        horario: format(formData.horario, 'HH:mm'), // Formata para '18:30'
+      };
+      
+      // 3. Fazer a chamada de API com o cabeçalho de autorização
+      await axios.post(`${apiUrl}/api/medicamentos/`, payload, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      Alert.alert(
+        'Sucesso!', 
+        'Medicamento e agendamento cadastrados.',
+        [{ text: 'OK', onPress: () => navigation.goBack() }] // Volta para a tela anterior
+      );
+
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("Erro no cadastro do medicamento:", JSON.stringify(error.response?.data));
+      } else {
+        console.error("Erro no cadastro do medicamento:", error);
+      }
+      Alert.alert('Erro', 'Não foi possível cadastrar o medicamento.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const confirmIOSTime = () => {
@@ -166,8 +199,8 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
         />
         
 
-        <TouchableOpacity style={styles.button} onPress={handleSave}>
-          <Text style={styles.buttonText}>SALVAR</Text>
+        <TouchableOpacity style={styles.button} onPress={handleSave} disabled={loading}>
+          {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>SALVAR</Text>}
         </TouchableOpacity>
       </View>
 
@@ -182,70 +215,6 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: '#FFFFFF',
-    borderTopRightRadius: 20,
-    borderTopLeftRadius: 20,
-    padding: 20,
-  },
-  modalButton: {
-    backgroundColor: '#558DC2',
-    padding: 15,
-    borderRadius: 8,
-    marginTop: 10,
-    alignItems: 'center',
-  },
-  modalButtonText: {
-      color: '#fff',
-      fontSize: 16,
-      fontWeight: 'bold',
-  },
-  wrapper: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  container: {
-    paddingHorizontal: 20,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: '500',
-    marginVertical: 20,
-    textAlign: 'center',
-    color: '#558DC2',
-    marginBottom: 30,
-    marginTop: 30,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#558DC2',
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 20,
-    backgroundColor: '#f0f4f8',
-    fontSize: 14,
-    justifyContent: 'center',
-  },
-  button: {
-    backgroundColor: '#558DC2',
-    paddingVertical: 15,
-    borderRadius: 8,
-    marginTop: 20,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-});
 
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
