@@ -6,65 +6,45 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
-  ActivityIndicator 
+  ActivityIndicator,
 } from 'react-native';
-import axios from 'axios'
-import * as SecureStore from 'expo-secure-store'
 import { style } from './style'; 
 import LogoAmparo from '../../assets/LogoAmparo.png';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack'; 
-import { RootStackParamList } from '../../../App';
+import { RootStackParamList } from '../../../App'; 
+import { AuthProvider, useAuth  } from '../../contexts/AuthContext'; 
 
 type LoginScreenProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 export default function LoginScreen({ navigation }: LoginScreenProps) {
-  const [username, setUsername] = React.useState('')
-  const [password, setPassword] = React.useState('')
-  const [loading, setLoading] = React.useState(false)
-  const [rememberMe, setRememberMe] = React.useState(false)
+  const { signIn } = useAuth(); 
 
-  console.log("Conectando à API em:", process.env.EXPO_PUBLIC_API_URL)
+  const [username, setUsername] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
+  const [rememberMe, setRememberMe] = React.useState(false);
 
   const handleLogin = async () => {
     
     if(!username || !password){
-      Alert.alert('Atenção', 'Por favor, preencha o e-mail e a senha')
-      return
+      Alert.alert('Atenção', 'Por favor, preencha o usuário e a senha');
+      return;
     }
 
-    //Componente temporário
-     if (username === 'test' && password === '1234'){ 
-       navigation.replace('Home')
-     }
+    setLoading(true);
 
-    setLoading(true)
+    try {
+      await signIn(username, password);
 
-    try{
-      const apiUrl = process.env.EXPO_PUBLIC_API_URL
-      const response = await axios.post(`${apiUrl}/api/token/`, {
-        username: username,
-        password: password
-      })
-
-      const tokens  = response.data
-
-      await SecureStore.setItemAsync('accessToken', tokens.access);
-      await SecureStore.setItemAsync('refreshToken', tokens.refresh);
-      navigation.replace('Home')
-    }catch (error){
-      console.error("Erro no login:", error)
-
-      if (axios.isAxiosError(error) && error.response) {
-          const errorMessage = error.response.data.error || 'Credenciais inválidas. Tente novamente.';
-          Alert.alert('Erro de Login', errorMessage);
-      } else {
-          Alert.alert('Erro de Conexão', 'Não foi possível conectar ao servidor.');
-      }
+    } catch (error) {
+      
+      console.error("Erro no login:", error);
+      Alert.alert('Erro de Login', 'Usuário ou senha inválidos. Tente novamente.');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -83,7 +63,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
         <View style={style.boxInput}>
           <TextInput
             style={style.textInput}
-            placeholder="Digite seu usuário" 
+            placeholder="Digite seu usuário"
             value={username}
             onChangeText={setUsername}
             autoCapitalize="none" 
@@ -95,7 +75,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
           />
         </View>
 
-        <Text style={style.textTitle}>PIN</Text>
+        <Text style={style.textTitle}>SENHA</Text>
         <View style={style.boxInput}>
           <TextInput
             style={style.textInput}
@@ -107,7 +87,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
             maxLength={4}
           />
           <Entypo
-            name="eye" // talvez adicione uma funcionalidade para toggle visibilidade
+            name="eye"
             size={24}
             color="black"
           />
@@ -133,18 +113,20 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
 
       <View style={style.boxBottom}>
         <TouchableOpacity 
-          style={[style.button, loading && {backgroundColor: '#ccc'}]} onPress={handleLogin}
+          style={[style.button, loading && {backgroundColor: '#ccc'}]} 
+          onPress={handleLogin}
           disabled={loading}
         >
           {loading ? (
-              <ActivityIndicator color="#fff" />
+            <ActivityIndicator color="#fff" />
           ) : (
-              <Text style={style.textButton}>Entrar</Text>
+            <Text style={style.textButton}>Entrar</Text>
           )}
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity onPress={() => navigation.navigate('CadastroUsuario')}>
+      {/* Ajuste o nome da tela de cadastro se necessário */}
+      <TouchableOpacity onPress={() => navigation.navigate('CadastroUsuario' as never)}>
         <Text style={style.textBotton}>Não tem conta? Criar agora!</Text>
       </TouchableOpacity>
     </View>

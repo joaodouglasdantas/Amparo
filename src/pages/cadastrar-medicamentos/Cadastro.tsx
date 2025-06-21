@@ -29,7 +29,7 @@ type CadastroScreenProps = NativeStackScreenProps<RootStackParamList, 'CadastroM
 export default function CadastrarMedicamento({ navigation }: CadastroScreenProps) {
   const [formData, setFormData] = useState<MedicamentoFormData>({
     nome: '',
-    horario: new Date(), // Inicia com a data/hora atual
+    horario: new Date(), 
     frequencia: null,
     dosagem: '',
     observacao: '',
@@ -37,7 +37,6 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // 3. Criamos um handler genérico para atualizar o estado
   const handleInputChange = (field: keyof MedicamentoFormData, value: any) => {
     setFormData(prevState => ({
       ...prevState,
@@ -65,25 +64,21 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
     setLoading(true);
 
     try {
-      // 1. Pegar o token de autenticação
       const token = await SecureStore.getItemAsync('accessToken');
       if (!token) {
         Alert.alert('Erro', 'Você não está autenticado.');
         setLoading(false);
-        // Opcional: navegar para a tela de login
-        // navigation.navigate('Login');
+        
         return;
       }
 
       const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
-      // 2. Preparar os dados para enviar. O horário precisa ser formatado.
       const payload = {
         ...formData,
-        horario: format(formData.horario, 'HH:mm'), // Formata para '18:30'
+        horario: format(formData.horario, 'HH:mm'), 
       };
       
-      // 3. Fazer a chamada de API com o cabeçalho de autorização
       await axios.post(`${apiUrl}/api/medicamentos/`, payload, {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -93,7 +88,7 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
       Alert.alert(
         'Sucesso!', 
         'Medicamento e agendamento cadastrados.',
-        [{ text: 'OK', onPress: () => navigation.goBack() }] // Volta para a tela anterior
+        [{ text: 'OK', onPress: () => navigation.goBack() }] 
       );
 
     } catch (error) {
@@ -205,11 +200,6 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
       </View>
 
       <BottomNavigationBar
-        onCalendarPress={() => {}}
-        onSearchPress={() => {}}
-        onAddPress={() => {}}
-        onTimerPress={() => {}}
-        onSettingsPress={() => {}}
         activeTab="add"
       />
     </View>
