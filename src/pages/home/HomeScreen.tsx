@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack'; 
-import { format, getDay, parse } from 'date-fns';
-import { ptBR } from 'date-fns/locale'; 
+import { format, getDay, parse } from 'date-fns'; 
 import api from '../../services/api'; 
 import { useFocusEffect } from '@react-navigation/native'
 import styles from './styles';
@@ -17,6 +16,7 @@ export type RootStackParamList = {
   Login: undefined;
   Home: undefined;
   CadastroMedicamento: undefined;
+  Configuracao: undefined;
 };
 type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
@@ -46,61 +46,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   const [activeTab, setActiveTab] = useState<'calendar' | 'search' | 'add' | 'timer' | 'settings'>('calendar');
 
-  // efeito para marcar a data selecionada no calendário
   useEffect(() => {
-    // a cada vez que selectedDate muda, atualiza as datas marcadas para refletir a seleção
+   
     setMarkedDates({
       [selectedDate]: { selected: true, marked: true, selectedColor: '#3F7EE4' },
-      // exemplo: se você quiser marcar outras datas com pontos:
-      // '2025-06-05': { marked: true, dotColor: 'red' },
-      // '2025-06-10': { marked: true, dotColor: 'blue' },
+     
     });
-  }, [selectedDate]); // dependência: executa quando selectedDate muda
-
-  // função chamada quando um dia é pressionado no calendário
-  const handleDayPress = (day: any) => {
-    setSelectedDate(day.dateString); // day.dateString é no formato 'YYYY-MM-DD'
-    
-    console.log('Dia selecionado:', day.dateString);
-    Alert.alert('Dia Selecionado', `Você selecionou: ${format(new Date(day.dateString), 'dd/MM/yyyy', { locale: ptBR })}`);
-  };
-
-  // funções para os botões da barra de navegação inferior (exemplo)
-  const handleCalendarPress = () => {
-    setActiveTab('calendar');
-    // lógica específica para a aba Calendário
-    console.log('Aba Calendário clicada!');
-  };
-
-  const handleSearchPress = () => {
-    setActiveTab('search');
-    // lógica específica para a aba Pesquisa
-    console.log('Aba Pesquisa clicada!');
-  };
-
-  const handleAddPress = () => {
-    console.log('Plus button clicked!');
-    setActiveTab('add');
-    // lógica específica para a aba Adicionar
-    navigation.navigate('CadastroMedicamento'); 
-    console.log('Aba Adicionar clicada!');
-
-    
-  };
-
-  const handleTimerPress = () => {
-    setActiveTab('timer');
-    // lógica específica para a aba Temporizador
-    console.log('Aba Temporizador clicada!');
-  };
-
-  const handleSettingsPress = () => {
-    setActiveTab('settings');
-    // lógica específica para a aba Configurações
-    console.log('Aba Configurações clicada!');
-    // exemplo: navegação para uma tela de configurações
-    // navigation.navigate('Settings');
-  };
+  }, [selectedDate]); 
 
   const fetchAgendamentos = async () => {
     try {
@@ -183,11 +135,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         {renderContent()}
       </ScrollView>
       <BottomNavigationBar
-        onCalendarPress={handleCalendarPress}
-        onSearchPress={handleSearchPress}
-        onAddPress={handleAddPress}
-        onTimerPress={handleTimerPress}
-        onSettingsPress={handleSettingsPress}
         activeTab={activeTab} 
       />
     </View>

@@ -1,28 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View, StyleSheet, Image, ActivityIndicator } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack'; 
+import SplashLogo from '../../assets/LogoAmparo.png';
 
-import SplashLogo from '../../assets/LogoAmparo.png'
-
-type RootStackParamList = {
-  Splash: undefined;
-  Login: undefined;
-  Home: undefined;
-};
-
-type SplashScreenProps = NativeStackScreenProps<RootStackParamList, 'Splash'>;
-
-const Splash: React.FC<SplashScreenProps> = ({ navigation }) => {
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      // aqui a gente faria a lógica de verificação de autenticação:
-
-      navigation.replace('Login'); 
-    }, 3000); // exemplo: 3 segundos
-
-    return () => clearTimeout(timer); // limpa o timer se o componente for desmontado
-  }, []); // o array vazio garante que o useEffect rode apenas uma vez ao montar
-
+const Splash = () => {
   return (
     <View style={styles.container}>
       <Image source={SplashLogo} style={styles.logo} resizeMode="contain" />
@@ -36,7 +16,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#5C9EDC',
     flex: 1,
-    justifyContent: 'center', // cor de fundo do splashe
+    justifyContent: 'center',
   },
   indicator: {
     marginTop: 20,
