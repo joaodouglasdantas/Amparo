@@ -62,6 +62,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  dosagemContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  dosagemInput: {
+    flex: 1,
+    marginRight: 20,
+  },
+  dosagemUnidadeInput: {
+    flex: 1,
+  }
 });
 
 export default styles;
