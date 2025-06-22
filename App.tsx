@@ -13,10 +13,12 @@ import HomeScreen from './src/pages/home/HomeScreen';
 import CadastroMedicamentos from './src/pages/cadastrar-medicamentos/Cadastro';  
 import CadastroUsuario from './src/pages/cadastro-usuarios/CadastroScreen';    
 import ConfiguracaoScreen from './src/pages/configuracao/ConfiguracaoScreen';
-import AlarmScreen from './src/pages/Alarme/AlarmeScreen';
+import AlarmScreen from './src/pages/alarme/AlarmeScreen';
+import GerenciamentoScreen from './src/pages/gerenciamento/GerenciamentoScreen';
 
 export type RootStackParamList = {
   Splash: undefined; 
+  Gerenciamento: undefined;
   Login: undefined;  
   Home: undefined;  
   CadastroMedicamento: undefined;
@@ -72,6 +74,7 @@ const AppNavigator = () => {
             <Stack.Screen name="CadastroUsuario" component={CadastroUsuario} />
             <Stack.Screen name="Splash" component={Splash} />
             <Stack.Screen name="Alarm" component={AlarmScreen} />
+            <Stack.Screen name="Gerenciamento" component={GerenciamentoScreen} />
           </>
         )}
       </Stack.Navigator>

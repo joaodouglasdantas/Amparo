@@ -5,20 +5,16 @@ import { format, getDay, isAfter, isSameDay, parse, parseISO, startOfToday } fro
 import api from '../../services/api'; 
 import { useFocusEffect } from '@react-navigation/native'
 import styles from './styles';
+import { RootStackParamList } from '../../../App'; 
 
 import Header from '../../components/Header';
 import CalendarComponent from '../../components/CalendarComponent';
-import ReminderCard from '../../components/ReminderCard';
+//import ReminderCard from '../../components/ReminderCard';
 import BottomNavigationBar from '../../components/BottomNavigationBar';
 import LogoAmparo from '../../assets/LogoAmparoPreto.png'
 import MedicationGroupCard from '../../components/MedicacaoGroupCard'
 
-export type RootStackParamList = {
-  Login: undefined;
-  Home: undefined;
-  CadastroMedicamento: undefined;
-  Configuracao: undefined;
-};
+
 type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 export interface MedicamentoType {
@@ -81,19 +77,19 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     const hoje = startOfToday();
     const dataSelecionadaObj = parseISO(selectedDate);
     
-    // Filtra agendamentos que são válidos para a data selecionada
+    
     const agendamentosDoDia = agendamentos.filter(ag => {
-      // Se tiver data de fim, verifica se ainda está ativo
+      
       if (ag.data_fim && isAfter(hoje, parseISO(ag.data_fim))) {
         return false;
       }
-      // Aqui você pode adicionar sua lógica para frequência semanal
-      return true; // Simplificado para mostrar todos os diários
+      
+      return true;
     });
 
     if (agendamentosDoDia.length === 0) return [];
 
-    // Agrupa os agendamentos por ID do medicamento
+    
     const grupos = agendamentosDoDia.reduce((acc, agendamento) => {
       const medId = agendamento.medicamento.id;
       if (!acc[medId]) {
@@ -110,13 +106,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         const horariosOrdenados = grupo.horarios.sort();
         
         let proximoHorario: string | null = null;
-        // Apenas procura o próximo horário se a data selecionada for hoje
+        
         if (isSameDay(dataSelecionadaObj, hoje)) {
              proximoHorario = horariosOrdenados.find(h => 
                 isAfter(parse(h, 'HH:mm:ss', new Date()), agora)
             ) || null;
         } else if(isAfter(dataSelecionadaObj, hoje)) {
-            // Se for um dia futuro, o próximo horário é o primeiro da lista
+            
             proximoHorario = horariosOrdenados[0];
         }
 
@@ -132,13 +128,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   useEffect(() => {
     const newMarkedDates: { [key: string]: any } = {};
-    // Adiciona um ponto para cada dia que tem um agendamento
+    
     agendamentos.forEach(ag => {
         // Esta lógica deveria ser mais complexa para marcar os dias corretos no futuro
         // Por enquanto, vamos manter simples
     });
 
-    // Destaca a data atualmente selecionada
+    
     newMarkedDates[selectedDate] = { selected: true, selectedColor: '#3F7EE4' };
     setMarkedDates(newMarkedDates);
   }, [selectedDate, agendamentos]);
@@ -150,7 +146,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         return <Text style={styles.emptyText}>Nenhum lembrete para este dia.</Text>
     }
     
-    // Mapeia os DADOS AGRUPADOS para o nosso novo componente de card
+    
     return lembretesAgrupados.map((grupo) => (
       <MedicationGroupCard
         key={grupo.id} 

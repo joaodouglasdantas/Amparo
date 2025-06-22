@@ -4,7 +4,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../pages/home/HomeScreen'; 
+import { RootStackParamList } from '../../App'; 
 
 interface BottomNavigationBarProps {
   activeTab: 'calendar' | 'search' | 'add' | 'timer' | 'settings';
@@ -28,7 +28,7 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({ activeTab }) 
         />
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.iconButton} onPress={() => {}}>
+      <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Gerenciamento')}>
         <MaterialCommunityIcons
           name="text-box-search-outline"
           size={28}
@@ -44,13 +44,13 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({ activeTab }) 
         />
       </TouchableOpacity>
 
-      {/* <TouchableOpacity style={styles.iconButton} onPress={() => { }}>
+      <TouchableOpacity style={styles.iconButton} onPress={() => { }}>
         <MaterialCommunityIcons
           name="clock-time-four-outline"
           size={28}
           color={getIconColor('timer')}
         />
-      </TouchableOpacity> */}
+      </TouchableOpacity>
 
       <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Configuracao')}>
         <MaterialCommunityIcons
