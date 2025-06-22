@@ -20,14 +20,14 @@ export type RootStackParamList = {
 };
 type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
-interface MedicamentoType {
+export interface MedicamentoType {
   id: number;
   nome: string;
   dosagem: string;
   observacao: string;
 }
 
-interface AgendamentoType {
+export interface AgendamentoType {
   id: number;
   horario: string; 
   frequencia: 'Diário' | 'Semanal';
