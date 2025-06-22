@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack'; 
-import { format, getDay, parse } from 'date-fns'; 
+import { format, getDay, isAfter, isSameDay, parse, parseISO, startOfToday } from 'date-fns'; 
 import api from '../../services/api'; 
 import { useFocusEffect } from '@react-navigation/native'
 import styles from './styles';
@@ -11,6 +11,7 @@ import CalendarComponent from '../../components/CalendarComponent';
 import ReminderCard from '../../components/ReminderCard';
 import BottomNavigationBar from '../../components/BottomNavigationBar';
 import LogoAmparo from '../../assets/LogoAmparoPreto.png'
+import MedicationGroupCard from '../../components/MedicacaoGroupCard'
 
 export type RootStackParamList = {
   Login: undefined;
@@ -23,7 +24,7 @@ type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 export interface MedicamentoType {
   id: number;
   nome: string;
-  dosagem: string;
+  dosagem_formatada: string;
   observacao: string;
 }
 
@@ -32,6 +33,7 @@ export interface AgendamentoType {
   horario: string; 
   frequencia: 'Diário' | 'Semanal';
   medicamento: MedicamentoType;
+  data_fim: string | null;
 }
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
@@ -74,52 +76,88 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     }, [])
   );
 
-  useEffect(() => {
-    const newMarkedDates: { [key: string]: any } = {};
-    agendamentos.forEach(ag => {
-        const todayStr = format(new Date(), 'yyyy-MM-dd');
-        newMarkedDates[todayStr] = { ...newMarkedDates[todayStr], marked: true, dotColor: '#5095D4' };
+  const lembretesAgrupados = useMemo(() => {
+    const agora = new Date();
+    const hoje = startOfToday();
+    const dataSelecionadaObj = parseISO(selectedDate);
+    
+    // Filtra agendamentos que são válidos para a data selecionada
+    const agendamentosDoDia = agendamentos.filter(ag => {
+      // Se tiver data de fim, verifica se ainda está ativo
+      if (ag.data_fim && isAfter(hoje, parseISO(ag.data_fim))) {
+        return false;
+      }
+      // Aqui você pode adicionar sua lógica para frequência semanal
+      return true; // Simplificado para mostrar todos os diários
     });
 
-    newMarkedDates[selectedDate] = { ...newMarkedDates[selectedDate], selected: true, selectedColor: '#3F7EE4' };
-    
+    if (agendamentosDoDia.length === 0) return [];
+
+    // Agrupa os agendamentos por ID do medicamento
+    const grupos = agendamentosDoDia.reduce((acc, agendamento) => {
+      const medId = agendamento.medicamento.id;
+      if (!acc[medId]) {
+        acc[medId] = {
+          ...agendamento.medicamento,
+          horarios: [],
+        };
+      }
+      acc[medId].horarios.push(agendamento.horario);
+      return acc;
+    }, {} as { [key: number]: MedicamentoType & { horarios: string[] } });
+
+    return Object.values(grupos).map(grupo => {
+        const horariosOrdenados = grupo.horarios.sort();
+        
+        let proximoHorario: string | null = null;
+        // Apenas procura o próximo horário se a data selecionada for hoje
+        if (isSameDay(dataSelecionadaObj, hoje)) {
+             proximoHorario = horariosOrdenados.find(h => 
+                isAfter(parse(h, 'HH:mm:ss', new Date()), agora)
+            ) || null;
+        } else if(isAfter(dataSelecionadaObj, hoje)) {
+            // Se for um dia futuro, o próximo horário é o primeiro da lista
+            proximoHorario = horariosOrdenados[0];
+        }
+
+        const outrosHorarios = horariosOrdenados.filter(h => h !== proximoHorario);
+
+        return {
+            ...grupo,
+            proximoHorario: proximoHorario ? format(parse(proximoHorario, 'HH:mm:ss', new Date()), 'HH:mm') : null,
+            outrosHorarios: outrosHorarios.map(h => format(parse(h, 'HH:mm:ss', new Date()), 'HH:mm')),
+        };
+    }).sort((a,b) => (a.proximoHorario || '23:59').localeCompare(b.proximoHorario || '23:59'));
+  }, [agendamentos, selectedDate]);
+
+  useEffect(() => {
+    const newMarkedDates: { [key: string]: any } = {};
+    // Adiciona um ponto para cada dia que tem um agendamento
+    agendamentos.forEach(ag => {
+        // Esta lógica deveria ser mais complexa para marcar os dias corretos no futuro
+        // Por enquanto, vamos manter simples
+    });
+
+    // Destaca a data atualmente selecionada
+    newMarkedDates[selectedDate] = { selected: true, selectedColor: '#3F7EE4' };
     setMarkedDates(newMarkedDates);
   }, [selectedDate, agendamentos]);
 
-  const lembretesDoDia = useMemo(() => {
-    const diaDaSemanaSelecionado = getDay(new Date(`${selectedDate}T12:00:00`)); 
-
-    return agendamentos.filter(ag => {
-      if (ag.frequencia === 'Diário') {
-        return true;
-      }
-      if (ag.frequencia === 'Semanal') {
-  
-        return diaDaSemanaSelecionado === 0; 
-      }
-      return false;
-    }).sort((a, b) => a.horario.localeCompare(b.horario)); 
-  }, [selectedDate, agendamentos]);
-
   const renderContent = () => {
-    if (loading) {
-      return <ActivityIndicator size="large" color="#3F7EE4" style={{ marginTop: 50 }} />;
-    }
-    if (error) {
-      return <Text style={styles.errorText}>{error}</Text>;
-    }
-    if (lembretesDoDia.length === 0) {
+    if (loading) return <ActivityIndicator size="large" color="#3F7EE4" style={{ marginTop: 50 }} />;
+    if (error) return <Text style={styles.errorText}>{error}</Text>;
+    if (lembretesAgrupados.length === 0) {
         return <Text style={styles.emptyText}>Nenhum lembrete para este dia.</Text>
     }
     
-    return lembretesDoDia.map((ag) => (
-      <ReminderCard
-        key={ag.id} 
-        time={format(parse(ag.horario, 'HH:mm:ss', new Date()), 'HH:mm')} 
-        medication={ag.medicamento.nome}
-        dose={ag.medicamento.dosagem}
-        frequency={ag.frequencia}
-        notes={ag.medicamento.observacao}
+    // Mapeia os DADOS AGRUPADOS para o nosso novo componente de card
+    return lembretesAgrupados.map((grupo) => (
+      <MedicationGroupCard
+        key={grupo.id} 
+        nomeMedicamento={grupo.nome}
+        dosagem={grupo.dosagem_formatada}
+        proximoHorario={grupo.proximoHorario}
+        outrosHorarios={grupo.outrosHorarios}
       />
     ));
   };
@@ -130,7 +168,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <CalendarComponent
           onDayPress={(day) => setSelectedDate(day.dateString)}
-          markedDates={markedDates} currentMonth={''}        />
+          markedDates={markedDates} currentMonth={''}        
+        />
         <Text style={styles.remindersTitle}>Lembretes para {format(new Date(`${selectedDate}T12:00:00`), 'dd/MM/yyyy')}</Text>
         {renderContent()}
       </ScrollView>
