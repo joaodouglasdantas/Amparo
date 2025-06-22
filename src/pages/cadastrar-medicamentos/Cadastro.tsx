@@ -7,6 +7,8 @@ import styles from './style';
 import axios from 'axios'
 import * as SecureStore from 'expo-secure-store'
 import { ActivityIndicator } from 'react-native'
+import { scheduleReminder } from '../../services/notificacao';
+import { AgendamentoType, MedicamentoType } from '../home/HomeScreen';
 
 import Header from '../../components/Header';
 import BottomNavigationBar from '../../components/BottomNavigationBar';
@@ -79,11 +81,18 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
         horario: format(formData.horario, 'HH:mm'), 
       };
       
-      await axios.post(`${apiUrl}/api/medicamentos/`, payload, {
+      const response = await axios.post(`${apiUrl}/api/medicamentos/`, payload, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
+
+      const responseData = response.data
+      const novoAgendamento: AgendamentoType = responseData.agendamento;
+
+      if (novoAgendamento){
+        await scheduleReminder(novoAgendamento);
+      }
 
       Alert.alert(
         'Sucesso!', 
