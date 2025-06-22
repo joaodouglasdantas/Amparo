@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#f5f5f5',
-    flex: 1, // cor de fundo geral da tela
+    flex: 1, 
   },
   remindersTitle: {
     color: 'rgba(79, 131, 217, 1)',

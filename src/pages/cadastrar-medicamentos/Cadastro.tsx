@@ -7,7 +7,11 @@ import styles from './style';
 import axios from 'axios'
 import * as SecureStore from 'expo-secure-store'
 import { scheduleReminder } from '../../services/notificacao';
-import { AgendamentoType, MedicamentoType } from '../home/HomeScreen';
+import { AgendamentoType} from '../home/HomeScreen';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../home/HomeScreen'; 
+import { useRoute } from '@react-navigation/native';
+
 
 import Header from '../../components/Header';
 import BottomNavigationBar from '../../components/BottomNavigationBar';
@@ -26,26 +30,30 @@ type MedicamentoFormData = {
   observacao: string;
 };
 
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../home/HomeScreen'; 
+
 type CadastroScreenProps = NativeStackScreenProps<RootStackParamList, 'CadastroMedicamento'>;
 
 
 export default function CadastrarMedicamento({ navigation }: CadastroScreenProps) {
-  const [formData, setFormData] = useState<MedicamentoFormData>({
-    nome: '',
-    horario_inicio: new Date(), 
-    horario_fim: null,
-    intervalo: '',
-    duracao_valor: '',
-    duracao_unidade: 'dias',
-    dosagem_valor: '',
-    dosagem_unidade: 'mg',
-    observacao: '',
-  });
+  
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
+  const route = useRoute<any>()
+  const isEditing = route.params?.isEditing || false
+  const initialData = route.params?.medicamentoData || null
+
+  const [formData, setFormData] = useState<MedicamentoFormData>({
+    nome: initialData?.nome || '',
+    horario_inicio: initialData?.horario_inicio || new Date(),
+    horario_fim: initialData?.horario_fim || null,
+    intervalo: initialData?.intervalo || '',
+    duracao_valor: initialData?.duracao_valor || '',
+    duracao_unidade: initialData?.duracao_unidade || 'dias',
+    dosagem_valor: initialData?.dosagem_valor || '',
+    dosagem_unidade: initialData?.dosagem_unidade || 'mg',
+    observacao: initialData?.observacao || '',
+  });
 
   const handleInputChange = (field: keyof MedicamentoFormData, value: any) => {
     setFormData(prevState => ({ ...prevState, [field]: value }));
@@ -130,12 +138,21 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
         intervalo: intervaloNum,
         duracao_valor: duracaoNum,
       };
-      
-      const response = await axios.post(`${apiUrl}/api/medicamentos/`, payload, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+
+      let response;
+      if(isEditing){
+        response = await axios.put(`${apiUrl}/api/medicamentos/${initialData.id}`, payload, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+      }else{
+        response = await axios.post(`${apiUrl}/api/medicamentos/`, payload, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+      }
 
       const novosAgendamentos: AgendamentoType[] = response.data.agendamentos;
 
@@ -167,7 +184,7 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
     <View style={styles.wrapper}>
       <View style={styles.container}>
         <Header logoSource={LogoAmparo} />
-        <Text style={styles.title}>Cadastrar Medicamento</Text>
+        <Text style={styles.title}>{isEditing ? 'Editar Tratamento' : 'Cadastrar Medicamento'}</Text>
 
         <TextInput
           placeholder="Nome do medicamento"
@@ -178,12 +195,12 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
         />
         
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            {/* Horário de Início */}
+            
             <TouchableOpacity onPress={() => setShowStartTimePicker(true)} style={[styles.input, { flex: 1, marginRight: 10 }]}>
                 <Text>{`Início: ${format(formData.horario_inicio, 'HH:mm')}`}</Text>
             </TouchableOpacity>
 
-            {/* Horário de Fim (Opcional) */}
+            
             <TouchableOpacity onPress={() => setShowEndTimePicker(true)} style={[styles.input, { flex: 1 }]}>
                 <Text style={{ color: formData.horario_fim ? '#000' : '#999' }}>
                     {formData.horario_fim ? `Fim: ${format(formData.horario_fim, 'HH:mm')}` : 'Fim (Opcional)'}
@@ -321,7 +338,7 @@ export default function CadastrarMedicamento({ navigation }: CadastroScreenProps
         
 
         <TouchableOpacity style={styles.button} onPress={handleSave} disabled={loading}>
-          {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>SALVAR</Text>}
+          {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>{isEditing ? 'ATUALIZAR' : 'SALVAR'}</Text>}
         </TouchableOpacity>
       </View>
 
