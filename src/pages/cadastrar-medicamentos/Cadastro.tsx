@@ -9,7 +9,7 @@ import * as SecureStore from 'expo-secure-store'
 import { scheduleReminder } from '../../services/notificacao';
 import { AgendamentoType} from '../home/HomeScreen';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../home/HomeScreen'; 
+import { RootStackParamList } from '../../../App'; 
 import { useRoute } from '@react-navigation/native';
 
 

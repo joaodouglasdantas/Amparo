@@ -1,11 +1,10 @@
 // src/components/HistoricoCard.tsx
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { format, parseISO } from 'date-fns';
 
 type HistoricoCardProps = {
-  
   registro: {
     tomou: boolean;
     data_hora_tomada: string;
@@ -17,9 +16,11 @@ type HistoricoCardProps = {
       }
     }
   }
+
+  onPress: () => void;
 };
 
-const HistoricoCard: React.FC<HistoricoCardProps> = ({ registro }) => {
+const HistoricoCard: React.FC<HistoricoCardProps> = ({ registro, onPress }) => {
   const medicamento = registro?.agendamento?.medicamento;
   const horario = registro?.agendamento?.horario;
   const tomou = registro?.tomou;
@@ -37,20 +38,22 @@ const HistoricoCard: React.FC<HistoricoCardProps> = ({ registro }) => {
   }
 
   return (
-    <View style={cardStyle}>
-      <View style={styles.leftContent}>
-        <Text style={[styles.medicationText, textStyle]}>{medicamento.nome}</Text>
-        <Text style={[styles.dosageText, textStyle]}>{medicamento.dosagem_formatada ?? ''}</Text>
+    <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
+      <View style={cardStyle}>
+        <View style={styles.leftContent}>
+          <Text style={[styles.medicationText, textStyle]}>{medicamento.nome}</Text>
+          <Text style={[styles.dosageText, textStyle]}>{medicamento.dosagem_formatada ?? ''}</Text>
+        </View>
+        <View style={styles.rightContent}>
+          <Text style={[styles.timeText, textStyle]}>{format(parseISO(`1970-01-01T${horario}`), 'HH:mm')}</Text>
+          <MaterialCommunityIcons
+            name={tomou ? "check-circle" : "close-circle"}
+            size={24}
+            color={iconColor}
+          />
+        </View>
       </View>
-      <View style={styles.rightContent}>
-        <Text style={[styles.timeText, textStyle]}>{format(parseISO(`1970-01-01T${horario}`), 'HH:mm')}</Text>
-        <MaterialCommunityIcons
-          name={tomou ? "check-circle" : "close-circle"}
-          size={24}
-          color={iconColor}
-        />
-      </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
