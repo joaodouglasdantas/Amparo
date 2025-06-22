@@ -44,7 +44,7 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({ activeTab }) 
         />
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.iconButton} onPress={() => { }}>
+      <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Historico')}>
         <MaterialCommunityIcons
           name="clock-time-four-outline"
           size={28}

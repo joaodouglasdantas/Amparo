@@ -32,7 +32,7 @@ export default function AlarmScreen() {
 
   const handleRegister = async (tomou: boolean) => {
     try {
-      await api.post('/api/registrosmedicacao/', {
+      await api.post('/api/registros/', {
         agendamento: agendamentoId,
         tomou: tomou,
         data_hora_tomada: new Date().toISOString(),
