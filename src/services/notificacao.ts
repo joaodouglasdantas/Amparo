@@ -51,7 +51,7 @@ export const scheduleReminder = async (agendamento: AgendamentoType) => {
         identifier,
         content: {
           title: '💊 Hora do seu remédio!',
-          body: `Não se esqueça de tomar seu ${agendamento.medicamento.nome} (${agendamento.medicamento.dosagem}).`,
+          body: `Não se esqueça de tomar seu ${agendamento.medicamento.nome} (${agendamento.medicamento.dosagem_formatada}).`,
           sound: 'alarm.mp3',
           data: {
             screen: 'Alarm',

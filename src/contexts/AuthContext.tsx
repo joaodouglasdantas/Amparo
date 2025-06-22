@@ -5,6 +5,7 @@ import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import { AgendamentoType } from '../pages/home/HomeScreen'; 
 import { scheduleReminder } from '../services/notificacao'; 
+import { differenceInMinutes, isToday, parse, parseISO, set } from 'date-fns';
 
 type AuthContextType = {
   signIn: (username: string, password: string) => Promise<void>;
@@ -29,11 +30,69 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [userToken, setUserToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const checkAndRegisterDoses = async () => {
+    console.log("4. checkAndRegisterDoses: DENTRO da função, iniciando chamadas API...");
+
+    try{
+      const [agendamentosResponse, registrosResponse] = await Promise.all([
+        api.get('/api/agendamentos/'),
+        api.get('/api/registros/')
+      ])
+
+      const agendamentos: AgendamentoType[] = agendamentosResponse.data;
+      const registros: any[] = registrosResponse.data;
+      const agora = new Date();
+      const toleranciaMinutos = 15;
+
+      for (const ag of agendamentos) {
+        if (ag.frequencia !== 'Diário') continue;
+
+        const horarioAlarme = parse(ag.horario, 'HH:mm:ss', new Date());
+
+        if (differenceInMinutes(agora, horarioAlarme) > toleranciaMinutos) {
+          
+          const jaRegistradoHoje = registros.some(r => 
+            r.agendamento.id === ag.id && isToday(parseISO(r.data_hora_tomada))
+          );
+
+          if (!jaRegistradoHoje) {
+            console.log(`Dose não tomada detectada para: ${ag.medicamento.nome} às ${ag.horario}. Registrando...`);
+            await api.post('/api/registros/', {
+              agendamento: ag.id,
+              tomou: false,
+              data_hora_tomada: set(horarioAlarme, { seconds: 0 }).toISOString(), 
+            });
+          }
+        }
+      }
+
+    }catch (error) {
+      console.error("Erro ao verificar doses não tomadas:", error)
+    }
+  }
+
   useEffect(() => {
     const bootstrapAsync = async () => {
-      const token = await SecureStore.getItemAsync('accessToken');
-      setUserToken(token);
-      setIsLoading(false);
+      console.log("1. bootstrapAsync: Iniciando verificação de token...");
+      try {
+        const token = await SecureStore.getItemAsync('accessToken');
+        setUserToken(token);
+        console.log("2. bootstrapAsync: Token encontrado no SecureStore:", token ? `Sim (tamanho: ${token.length})` : 'Não (null)');
+
+        if (token) {
+          console.log("3. bootstrapAsync: Token existe, VOU CHAMAR a verificação de doses.");
+          await checkAndRegisterDoses(); 
+          console.log("5. bootstrapAsync: Verificação de doses CONCLUÍDA."); 
+        } else {
+          console.log("3. bootstrapAsync: Token NÃO existe, PULEI a verificação de doses.");
+        }
+      } catch (e) {
+        console.error('ERRO CRÍTICO no bootstrapAsync:', e);
+        setUserToken(null);
+      } finally {
+        console.log("6. bootstrapAsync: Finalizando, setIsLoading(false).");
+        setIsLoading(false);
+      }
     };
     bootstrapAsync();
   }, []);
@@ -73,20 +132,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       isLoading,
       userToken,
       signIn: async (username: any, password: any) => {
+
         const response = await api.post('/api/token/', { username, password });
         const { access, refresh } = response.data;
         await SecureStore.setItemAsync('accessToken', access);
         await SecureStore.setItemAsync('refreshToken', refresh);
         
-        const agendamentosResponse = await api.get('/api/agendamentos/', {
-          headers: { Authorization: `Bearer ${access}` }
-        });
-        await Notifications.cancelAllScheduledNotificationsAsync();
-        for (const ag of agendamentosResponse.data) {
-          await scheduleReminder(ag);
-        }
-        
         setUserToken(access);
+        await checkAndRegisterDoses();
       },
       signOut: async () => {
         await SecureStore.deleteItemAsync('accessToken');

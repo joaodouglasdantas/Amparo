@@ -15,6 +15,7 @@ import CadastroUsuario from './src/pages/cadastro-usuarios/CadastroScreen';
 import ConfiguracaoScreen from './src/pages/configuracao/ConfiguracaoScreen';
 import AlarmScreen from './src/pages/alarme/AlarmeScreen';
 import GerenciamentoScreen from './src/pages/gerenciamento/GerenciamentoScreen';
+import HistoricoScreen from './src/pages/historico/HistoricoScreen';
 
 export type RootStackParamList = {
   Splash: undefined; 
@@ -25,6 +26,7 @@ export type RootStackParamList = {
   CadastroUsuario: undefined;
   Configuracao: undefined;
   Alarm: { agendamentoId: string };
+  Historico: undefined
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -75,6 +77,7 @@ const AppNavigator = () => {
             <Stack.Screen name="Splash" component={Splash} />
             <Stack.Screen name="Alarm" component={AlarmScreen} />
             <Stack.Screen name="Gerenciamento" component={GerenciamentoScreen} />
+            <Stack.Screen name="Historico" component={HistoricoScreen} />
           </>
         )}
       </Stack.Navigator>
