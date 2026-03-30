@@ -37,12 +37,12 @@ Siga os passos abaixo para configurar o ambiente de desenvolvimento:
 
 1.  **Clone o repositório:**
     ```bash
-    git clone https://github.com/luisjro16/amparo-front.git
+    git clone https://github.com/luisjro16/amparo-front-end.git
     ```
 
 2.  **Navegue até o diretório do projeto:**
     ```bash
-    cd amparo-front
+    cd amparo-front-end
     ```
 
 3.  **Instale as dependências:**
