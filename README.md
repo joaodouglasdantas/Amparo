@@ -25,9 +25,7 @@ O objetivo central é promover a adesão ao tratamento médico através de:
 
 ## Documentação Completa
 
-Para informações detalhadas sobre arquitetura, requisitos, decisões de design e guias de desenvolvimento, consulte a **documentação oficial do projeto** localizada neste repositório (`amparo-geral`), na pasta `/docs`.
-
-➡️ [Acesse a Documentação Completa](https://github.com/luisjro16/amparo-geral.git)
+Para informações detalhadas sobre arquitetura, requisitos, decisões de design e guias de desenvolvimento, consulte a **documentação oficial do projeto** localizada neste repositório: ➡️ [Acesse a Documentação Completa](https://github.com/luisjro16/amparo-geral.git)
 
 ## Equipe 🧑‍💻🤝
 
