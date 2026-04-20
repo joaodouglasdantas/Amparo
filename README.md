@@ -23,24 +23,11 @@ O objetivo central é promover a adesão ao tratamento médico através de:
 * **Foco na Privacidade:** Dados gerenciados localmente.
 * **Operação Offline:** Acesso às funcionalidades essenciais sem internet.
 
-## Arquitetura e Repositórios do Projeto
-
-O desenvolvimento do Amparo está distribuído nos seguintes repositórios:
-
-* 📱 **Frontend (Aplicativo Móvel):** `amparo-front`
-    * Contém o código-fonte do aplicativo para Android e iOS.
-    * Link: [Repositório Frontend do Amparo](https://github.com/luisjro16/amparo-front-end.git)
-* ⚙️ **Backend (Serviços e APIs):** `amparo-back`
-    * Responsável pela lógica de servidor e APIs para futuras integrações.
-    * Link: [Repositório Backend do Amparo](https://github.com/luisjro16/amparo-back-end.git)
-* 📖 **Geral e Documentação:** `amparo-geral` (este repositório)
-    * Centraliza a documentação do projeto, visão geral e este README.
-
 ## Documentação Completa
 
 Para informações detalhadas sobre arquitetura, requisitos, decisões de design e guias de desenvolvimento, consulte a **documentação oficial do projeto** localizada neste repositório (`amparo-geral`), na pasta `/docs`.
 
-➡️ [Acesse a Documentação Completa](./docs/INDEX.md) 
+➡️ [Acesse a Documentação Completa](https://github.com/luisjro16/amparo-geral.git)
 
 ## Equipe 🧑‍💻🤝
 
